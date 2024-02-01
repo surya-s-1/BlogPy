@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Posts by {{username}}
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h3>{{username}}'s posts</h3>
+        <div class="container mt-3">
+            {% for post in posts %}
+                <a href="{% url 'postdetails' username=post.user.username post_id=post.id %}" class="badge-light">
+                    <ul class="list-group mt-2">
+                        <li class="list-group-item">
+                            <h3>{{post.title}}</h3>
+                            <p><i><small>by <strong>{{post.user.username}}</strong> {{post.created_at | timesince}} ago</small></i></p>
+                        </li>
+                    </ul>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

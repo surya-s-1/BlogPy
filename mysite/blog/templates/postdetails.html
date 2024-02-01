@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{post.title}}
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1>{{post.title}}</h1>
+        <p>{{post.content}}</p>
+        <p><i><small>by <a href="{% url 'userposts' username=post.user.username %}" style="color: black;"><strong>{{post.user.username}}</strong></a> {{post.created_at | timesince}} ago</small></i></p>
+
+        <h3>Comments</h3>
+
+        <div class="container">
+            {% for comment in post.comments.all %}
+                <p>{{comment.comment}}</p>
+                <p><i><small>by <a href="{% url 'userposts' username=comment.user.username %}" style="color: black;"><strong>{{comment.user.username}}</strong></a> {{comment.created_at | timesince}} ago</small></i></p>
+            {% endfor %}
+        </div>
+
+        <form method="post">
+			{% csrf_token %}
+	
+			<div class="form-group">
+				<textarea class="form-control" name="comment" rows="15" placeholder="Enter your thoughts..." required></textarea>
+			</div>
+	
+			{% if messages %}
+				<div class="alert alert-primary">
+					{% for message in messages %}
+						{{ message }}
+					{% endfor %}
+				</div>
+			{% endif %}
+	
+			<p><button type="submit" class="btn btn-primary">Submit</button></p>
+		</form>
+    </div>
+{% endblock %}

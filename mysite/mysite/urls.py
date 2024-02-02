@@ -27,6 +27,7 @@ urlpatterns = [
     path('register/', register, name='register'),
     path('logout/', logout, name='logout'),    
     path('newpost/', newpost, name='newpost'),
+    path('posts/', posts, name='posts'),
     path('posts/<str:username>/', userposts, name='userposts'),
     path('posts/<str:username>/<int:post_id>/', postdetails, name='postdetails'),
     path('', home, name='default')

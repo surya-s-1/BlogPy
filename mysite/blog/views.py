@@ -11,7 +11,52 @@ def home(request):
     posts = Post.objects.all()
     return render(request, 'home.html', {'posts':posts})
 
+@login_required(login_url='login')
+def posts(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+
+def register(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+    
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        user = User.objects.filter(username=username)
+        
+        if user.exists():
+            messages.info(request, 'Username already taken')
+            return render(request, 'register.html', {
+                'first_name':first_name,
+                'last_name': last_name,
+                'email': email,
+                'password': password
+            })
+        
+        user = User.objects.create_user(
+            first_name = first_name,
+            last_name = last_name,
+            username = username,
+            email = email
+        )
+
+        user.set_password(password)
+        user.save()
+
+        messages.info(request, 'User created successfully!')
+        return redirect('login')
+    
+    return render(request, 'register.html')
+
 def login(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+    
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -30,35 +75,6 @@ def login(request):
             return redirect('home')
     
     return render(request, 'login.html')
-
-def register(request):
-    if request.method == 'POST':
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-
-        user = User.objects.filter(username=username)
-        
-        if user.exists():
-            messages.info(request, 'Username already taken')
-            return redirect('register')
-        
-        user = User.objects.create_user(
-            first_name = first_name,
-            last_name = last_name,
-            username = username,
-            email = email
-        )
-
-        user.set_password(password)
-        user.save()
-
-        messages.info(request, 'User created successfully!')
-        return redirect('login')
-    
-    return render(request, 'register.html')
 
 def logout(request):
     dj_logout(request)
